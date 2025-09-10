@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhimanyu Tiling Works - Salary Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .form-container {
+            padding: 30px 25px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.2);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .result-container {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+
+        .result-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .final-amount {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .final-amount .result-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        .final-amount .result-value {
+            color: white;
+            font-size: 24px;
+        }
+
+        .clear-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: #666;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 10px auto;
+            }
+            
+            .company-name {
+                font-size: 20px;
+            }
+            
+            .form-container {
+                padding: 25px 20px;
+            }
+            
+            .input-field {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+            
+            .calculate-btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+
+        .error {
+            border-color: #ff6b6b !important;
+            background-color: #fff5f5 !important;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .currency {
+            color: #4facfe;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company-name">Abhimanyu Tiling Works</div>
+            <div class="subtitle">Helper & Mason Salary Calculator</div>
+        </div>
+        
+        <div class="form-container">
+            <div class="input-group">
+                <label class="input-label" for="dailySalary">Daily Salary (₹)</label>
+                <input type="number" id="dailySalary" class="input-field" placeholder="Enter daily salary (e.g., 650)" step="0.01">
+                <div class="error-message" id="dailySalaryError">Please enter a valid daily salary</div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="workingDays">Working Days</label>
+                <input type="number" id="workingDays" class="input-field" placeholder="Enter working days (e.g., 30.5)" step="0.25">
+                <div class="error-message" id="workingDaysError">Please enter valid working days</div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="kharchi">Kharchi (Advance Taken) ₹</label>
+                <input type="number" id="kharchi" class="input-field" placeholder="Enter advance amount (e.g., 5000)" step="0.01" value="0">
+                <div class="error-message" id="kharchiError">Please enter a valid advance amount</div>
+            </div>
+            
+            <button class="calculate-btn" onclick="calculateSalary()">Calculate Salary</button>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="result-row">
+                    <span class="result-label">Daily Salary:</span>
+                    <span class="result-value currency" id="displayDailySalary">₹0</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Working Days:</span>
+                    <span class="result-value" id="displayWorkingDays">0</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Gross Salary:</span>
+                    <span class="result-value currency" id="displayGrossSalary">₹0</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Advance Taken:</span>
+                    <span class="result-value currency" id="displayKharchi">₹0</span>
+                </div>
+                <div class="final-amount">
+                    <div class="result-row">
+                        <span class="result-label">Net Amount Payable:</span>
+                        <span class="result-value" id="finalAmount">₹0</span>
+                    </div>
+                </div>
+                <button class="clear-btn" onclick="clearForm()">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateInput(value, fieldName) {
+            if (value === '' || value === null || value === undefined) {
+                return { valid: false, message: `Please enter ${fieldName}` };
+            }
+            
+            const numValue = parseFloat(value);
+            if (isNaN(numValue) || numValue < 0) {
+                return { valid: false, message: `Please enter a valid ${fieldName}` };
+            }
+            
+            return { valid: true, value: numValue };
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorElement = document.getElementById(fieldId + 'Error');
+            
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            
+            // Remove error after user starts typing
+            field.addEventListener('input', function() {
+                field.classList.remove('error');
+                errorElement.style.display = 'none';
+            }, { once: true });
+        }
+
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error-message');
+            const inputFields = document.querySelectorAll('.input-field');
+            
+            errorElements.forEach(el => el.style.display = 'none');
+            inputFields.forEach(field => field.classList.remove('error'));
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function calculateSalary() {
+            clearErrors();
+            
+            const dailySalaryInput = document.getElementById('dailySalary').value;
+            const workingDaysInput = document.getElementById('workingDays').value;
+            const kharchiInput = document.getElementById('kharchi').value || '0';
+            
+            // Validate inputs
+            const dailySalaryValidation = validateInput(dailySalaryInput, 'daily salary');
+            const workingDaysValidation = validateInput(workingDaysInput, 'working days');
+            const kharchiValidation = validateInput(kharchiInput, 'advance amount');
+            
+            let hasError = false;
+            
+            if (!dailySalaryValidation.valid) {
+                showError('dailySalary', dailySalaryValidation.message);
+                hasError = true;
+            }
+            
+            if (!workingDaysValidation.valid) {
+                showError('workingDays', workingDaysValidation.message);
+                hasError = true;
+            }
+            
+            if (!kharchiValidation.valid) {
+                showError('kharchi', kharchiValidation.message);
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Add loading effect
+            const container = document.querySelector('.container');
+            container.classList.add('loading');
+            
+            setTimeout(() => {
+                const dailySalary = dailySalaryValidation.value;
+                const workingDays = workingDaysValidation.value;
+                const kharchi = kharchiValidation.value;
+                
+                // Calculate gross salary
+                const grossSalary = dailySalary * workingDays;
+                
+                // Calculate net payable amount
+                const netAmount = grossSalary - kharchi;
+                
+                // Update display
+                document.getElementById('displayDailySalary').textContent = formatCurrency(dailySalary);
+                document.getElementById('displayWorkingDays').textContent = workingDays.toFixed(2);
+                document.getElementById('displayGrossSalary').textContent = formatCurrency(grossSalary);
+                document.getElementById('displayKharchi').textContent = formatCurrency(kharchi);
+                document.getElementById('finalAmount').textContent = formatCurrency(netAmount);
+                
+                // Show result with animation
+                const resultContainer = document.getElementById('resultContainer');
+                resultContainer.classList.add('show');
+                
+                // Remove loading effect
+                container.classList.remove('loading');
+                
+                // Scroll to result on mobile
+                if (window.innerWidth <= 480) {
+                    setTimeout(() => {
+                        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }, 300);
+                }
+            }, 300);
+        }
+
+        function clearForm() {
+            // Clear input fields
+            document.getElementById('dailySalary').value = '';
+            document.getElementById('workingDays').value = '';
+            document.getElementById('kharchi').value = '0';
+            
+            // Hide result container
+            const resultContainer = document.getElementById('resultContainer');
+            resultContainer.classList.remove('show');
+            
+            // Clear any errors
+            clearErrors();
+            
+            // Focus on first input
+            document.getElementById('dailySalary').focus();
+        }
+
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateSalary();
+            }
+        });
+
+        // Auto-focus on first input when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('dailySalary').focus();
+        });
+
+        // Format number inputs on blur
+        document.getElementById('dailySalary').addEventListener('blur', function() {
+            const value = parseFloat(this.value);
+            if (!isNaN(value)) {
+                this.value = value.toFixed(2);
+            }
+        });
+
+        document.getElementById('kharchi').addEventListener('blur', function() {
+            const value = parseFloat(this.value);
+            if (!isNaN(value)) {
+                this.value = value.toFixed(2);
+            }
+        });
+
+        // Prevent negative values
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
